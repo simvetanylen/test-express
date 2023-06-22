@@ -27,3 +27,10 @@ Pour plus tard :
 - headless crm integ
 - tailwindui ?
 - web-vitals
+
+//    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
+
+- voir pour avoir une structure :
+    - ./commands
+    - ./commands/create-article.ts
+    - ./commands/create-article.tsx

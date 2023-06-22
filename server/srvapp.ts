@@ -10,10 +10,15 @@ import {MongoClient} from "mongodb";
 import {ArticleRepository} from "./articles/article-repository";
 import {Article} from "./articles/article";
 import {IvoryContainer} from "./ivory/container/ivory-container";
+import path from "path";
+import fs from "fs";
+import ReactDOMServer from 'react-dom/server';
+import App from "../react-app/App";
+import React from "react";
 
-const app = express();
+const srvapp = express();
 
-app.use(express.json());
+srvapp.use(express.json());
 
 const mongoClient = new MongoClient('mongodb://root:root@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false')
 const mongoDb = mongoClient.db('test')
@@ -23,7 +28,7 @@ container.registerInstance(new ArticleRepository(mongoDb.collection('articles'),
 container.register(ArticleService, ArticlesWebservices)
 
 
-app.use(sessions({
+srvapp.use(sessions({
     name: 'test-session',
     secret: 'random secret to set',
     saveUninitialized: false,
@@ -37,14 +42,28 @@ app.use(sessions({
     store: new sessions.MemoryStore()
 }))
 
-app.use(cookieParser())
+srvapp.use(cookieParser())
+srvapp.use(express.static('./dist/static'));
 
-app.use('/', transformToExpressRouter(container.getBean(ArticlesWebservices)))
-app.use('/', basketsWebservices)
-app.use('/', authenticationWebservices)
+srvapp.use('/', transformToExpressRouter(container.getBean(ArticlesWebservices)))
+srvapp.use('/', basketsWebservices)
+srvapp.use('/', authenticationWebservices)
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server');
-});
+// srvapp.get('/', (req, res) => {
+//     const app = ReactDOMServer.renderToString(React.createElement(App));
+//     const indexFile = path.resolve('./dist/static/index.html');
+//
+//     fs.readFile(indexFile, 'utf8', (err, data) => {
+//         if (err) {
+//             console.error('Something went wrong:', err);
+//             return res.status(500).send('Oops, better luck next time!');
+//         }
+//
+//         // return res.send(data)
+//         return res.send(
+//             data.replace('<div id="root"></div>', `<div id="root">${app}</div>`)
+//         );
+//     });
+// });
 
-export default app;
+export default srvapp;

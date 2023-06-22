@@ -1,4 +1,4 @@
-import app from './app';
+import srvapp from './srvapp';
 import {eventEmitter} from "./event-emitter";
 import {registerPolicies} from "./custom/register-policies";
 import {BasketPolicies} from "./baskets/policies";
@@ -12,7 +12,7 @@ const basketPolicies = new BasketPolicies(basketService)
 
 registerPolicies(eventEmitter, basketPolicies)
 
-app.listen(port, () => {
+srvapp.listen(port, () => {
     /* eslint-disable no-console */
     console.log(`Listening: http://localhost:${port}`);
     /* eslint-enable no-console */
