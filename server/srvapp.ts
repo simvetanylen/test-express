@@ -15,6 +15,7 @@ import fs from "fs";
 import ReactDOMServer from 'react-dom/server';
 import App from "../react-app/App";
 import React from "react";
+import {RestControllerAnnotation} from "./ivory/rest/annotations";
 
 const srvapp = express();
 
@@ -45,7 +46,10 @@ srvapp.use(sessions({
 srvapp.use(cookieParser())
 srvapp.use(express.static('./dist/static'));
 
-srvapp.use('/', transformToExpressRouter(container.getBean(ArticlesWebservices)))
+for (let beanDef of container.getBeansByClassAnnotation(RestControllerAnnotation)) {
+    srvapp.use('/', transformToExpressRouter(beanDef.bean))
+}
+
 srvapp.use('/', basketsWebservices)
 srvapp.use('/', authenticationWebservices)
 

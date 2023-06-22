@@ -1,38 +1,41 @@
+import "reflect-metadata"
 import {Injectable, IvoryContainer} from "./ivory/container/ivory-container";
+import {Annotations} from "./ivory/annotation/annotation";
 
-
+class RestControllerAnnotation {
+    constructor(readonly name: string) {}
+}
 
 @Injectable()
-class MyRepository {
+class TestClass {
 
     constructor() {
     }
 
-    public sayHello() {
+    sayHello() {
         console.log('hello')
     }
 }
 
-
 @Injectable()
-class MyService {
-
-    private repo: MyRepository
-
-
-    constructor(repo: MyRepository) {
-        this.repo = repo;
+class TestCLass2 {
+    constructor(private readonly testClass: TestClass) {
     }
 
-    public sayHello() {
-        this.repo.sayHello()
-        console.log('my hello')
+    sayHello() {
+        this.testClass.sayHello()
     }
 }
 
-
+Annotations.Class.annotate(
+    new RestControllerAnnotation('test'),
+    TestClass
+)
 
 const container = new IvoryContainer()
+container.register(TestClass, TestCLass2)
 
-container.register(MyService, MyRepository)
-container.getBean(MyService).sayHello()
+// console.log(Annotations.Class.first(RestControllerAnnotation, TestClass))
+//
+const result = container.getBeansByClassAnnotation(RestControllerAnnotation)
+console.log(result)

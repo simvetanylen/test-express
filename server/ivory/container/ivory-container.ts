@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import {ClassConstructor} from "class-transformer";
+import {Annotations} from "../annotation/annotation";
 
 export function Injectable() {
     return function <T>(target: ClassConstructor<T>) {}
@@ -23,7 +24,28 @@ export class IvoryContainer {
         })
     }
 
-    public getBean<T>(type: ClassConstructor<T>): T {
+    public getBeansByClassAnnotation<ANNOTATION>(annotationType: typeof ANNOTATION): {
+        annotation: ANNOTATION,
+        bean: Object
+    }[] {
+        const result = []
+
+        for (let classRef of this.instances.keys()) {
+            const annotation = Annotations.Class.first(annotationType, classRef)
+            if (annotation !== undefined) {
+                const bean = this.getBean(classRef)
+
+                result.push({
+                    annotation: annotation as ANNOTATION,
+                    bean: bean
+                })
+            }
+        }
+
+        return result
+    }
+
+    public getBean<BEAN>(type: ClassConstructor<BEAN>): BEAN {
         if (!this.instances.has(type)) {
             throw 'Instance not registered'
         }
@@ -36,8 +58,11 @@ export class IvoryContainer {
 
         let constructorParameters = []
 
-        for (let paramType of Reflect.getMetadata('design:paramtypes', type)) {
-            constructorParameters.push(this.getBean(paramType))
+        const paramTypes = Reflect.getMetadata('design:paramtypes', type)
+        if (paramTypes) {
+            for (let paramType of paramTypes) {
+                constructorParameters.push(this.getBean(paramType))
+            }
         }
 
         const instance = new type(...constructorParameters)

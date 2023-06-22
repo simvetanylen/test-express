@@ -1,11 +1,11 @@
 import {CreateArticle, UpdateArticle} from "./commands";
 import {ArticleService} from "./article-service";
 import {validate} from "class-validator";
-import {Body, Delete, Get, Header, PathParam, Post, Put, QueryParam} from "../ivory/rest/decorators";
+import {Body, Delete, Get, Header, PathParam, Post, Put, QueryParam, RestController} from "../ivory/rest/decorators";
 import {Session} from "express-session";
 import {Injectable} from "../ivory/container/ivory-container";
 
-@Injectable()
+@RestController()
 export class ArticlesWebservices {
 
     constructor(private readonly articleService: ArticleService) {

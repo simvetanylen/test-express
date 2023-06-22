@@ -10,6 +10,10 @@ export class RequestMappingAnnotation {
     }
 }
 
+export class RestControllerAnnotation {
+
+}
+
 export class PathParamAnnotation {
     paramName: string
 

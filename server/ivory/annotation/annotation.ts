@@ -41,7 +41,7 @@ export class Annotations {
         static first<T>(annotationType: typeof T, classReference: Object): T | undefined {
             const metadata = Reflect.getMetadata(IVORY_ANNOTATIONS, classReference) as IvoryAnnotationsModel
 
-            if (!metadata.classAnnotations) {
+            if (!metadata?.classAnnotations) {
                 return undefined
             }
 

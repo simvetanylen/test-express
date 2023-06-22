@@ -1,11 +1,11 @@
-import {MethodAnnotation, MethodParamAnnotation} from "../annotation/annotation";
+import {ClassAnnotation, MethodAnnotation, MethodParamAnnotation} from "../annotation/annotation";
 import {HttpMethod} from "./http-method";
 import {
     BodyAnnotation,
     HeaderAnnotation,
     PathParamAnnotation,
     QueryParamAnnotation,
-    RequestMappingAnnotation
+    RequestMappingAnnotation, RestControllerAnnotation
 } from "./annotations";
 
 export const Get = (path: string) => MethodAnnotation(new RequestMappingAnnotation(HttpMethod.GET, path))
@@ -18,3 +18,5 @@ export const PathParam = (paramName: string) => MethodParamAnnotation(new PathPa
 export const QueryParam = (paramName: string) => MethodParamAnnotation(new QueryParamAnnotation(paramName))
 export const Body = () => MethodParamAnnotation(new BodyAnnotation())
 export const Header = (headerName: string) => MethodParamAnnotation(new HeaderAnnotation(headerName))
+
+export const RestController = () => ClassAnnotation(new RestControllerAnnotation())
