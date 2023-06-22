@@ -8,10 +8,9 @@ import {Injectable} from "../ivory/container/ivory-container";
 
 @Injectable()
 export class ArticleService {
-    private repository: ArticleRepository
     publisher: DomainEventPublisher
 
-    constructor(repository: ArticleRepository) {
+    constructor(private readonly repository: ArticleRepository) {
         this.repository = repository
         this.publisher = new DomainEventPublisher(eventEmitter)
     }

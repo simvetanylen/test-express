@@ -10,6 +10,7 @@
 - Logger
 - Retries on conflict (mongo)
 - Note : les regles de sécurité doivent être mise dans le retry, parce que l'update d'aggregat peut changer le résultat de la regle
+- Protéger mdp de la serialization
 
 Pour plus tard :
 - Event sourced ORM
@@ -24,3 +25,5 @@ Pour plus tard :
 - Feature flags/profiles
 - Scheduler
 - headless crm integ
+- tailwindui ?
+- web-vitals
