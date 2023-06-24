@@ -19,16 +19,19 @@ import {RequestMappingAnnotation, RestControllerAnnotation} from "./annotations"
 import {Annotations} from "../annotation/annotation";
 import {createParameterResolutionFunction} from "../parameter-resolver/parameter-resolver";
 import {HttpMethod} from "./http-method";
+import cors from 'cors'
 
 export interface RestModuleConfiguration {
     port: number
-    sessions: {
-        enabled: boolean
-    } & SessionOptions
-
     staticFiles?: string
     basePath: string
-
+    sessions?: {
+        enabled: boolean
+    } & SessionOptions
+    cors?: {
+        enabled: boolean
+        allowedOrigins?: string[]
+    }
 }
 
 export class RestModule implements IvoryModule {
@@ -43,7 +46,7 @@ export class RestModule implements IvoryModule {
             HeaderResolverFactory
         )
 
-        if (this.configuration.sessions.enabled) {
+        if (this.configuration.sessions?.enabled) {
             container.register(SessionResolverFactory)
         }
 
@@ -56,7 +59,16 @@ export class RestModule implements IvoryModule {
         const server = express();
         server.use(express.json())
 
-        if (this.configuration.sessions.enabled) {
+        if (this.configuration.cors?.enabled) {
+            const corsConfig = {
+                origin: this.configuration.cors.allowedOrigins
+            }
+
+            server.use(cors(corsConfig))
+            server.options('*', cors(corsConfig))
+        }
+
+        if (this.configuration.sessions?.enabled) {
             server.use(sessions(this.configuration.sessions))
             server.use(cookieParser())
         }

@@ -43,6 +43,12 @@ new IvoryApplication()
             },
             resave: false,
             store: new sessions.MemoryStore()
+        },
+        cors: {
+            enabled: true,
+            allowedOrigins: [
+                'google.com'
+            ]
         }
     }))
     .registerInstance(new ArticleRepository(mongoDb.collection('articles'), Article))
