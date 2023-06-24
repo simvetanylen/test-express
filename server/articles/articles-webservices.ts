@@ -1,17 +1,15 @@
 import {CreateArticle, UpdateArticle} from "./commands";
 import {ArticleService} from "./article-service";
-import {validate} from "class-validator";
 import {Body, Delete, Get, Header, PathParam, Post, Put, QueryParam, RestController} from "../ivory/rest/decorators";
 import {Session} from "express-session";
-import {Injectable} from "../ivory/container/ivory-container";
 
-@RestController()
+@RestController('/articles')
 export class ArticlesWebservices {
 
     constructor(private readonly articleService: ArticleService) {
     }
 
-    @Get('/articles')
+    @Get('/')
     public async getArticles(
         @QueryParam('limit') limit: number,
         @Header('Content-Type') contentType: string,
@@ -20,7 +18,7 @@ export class ArticlesWebservices {
         return await this.articleService.findAll()
     }
 
-    @Post('/articles')
+    @Post('/')
     public async createArticle(
         @Body() body: CreateArticle,
         session: Session
@@ -28,7 +26,7 @@ export class ArticlesWebservices {
         return await this.articleService.create(body)
     }
 
-    @Put('/articles/:id')
+    @Put('/:id')
     public async updateArticle(
         @PathParam('id') id: string,
         @Body() body: UpdateArticle
@@ -36,7 +34,7 @@ export class ArticlesWebservices {
         return await this.articleService.update(id, body)
     }
 
-    @Delete('/articles/:id')
+    @Delete('/:id')
     public async deleteArticle(
         @PathParam('id') id: string
     ) {

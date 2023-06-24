@@ -113,7 +113,7 @@ export class Annotations {
             Annotations.setAnnotations(classReference, metadata)
         }
 
-        static first<T>(annotationType: typeof T, classReference: Object, methodName: string, parameterIndex: number): T |undefined {
+        static first<T>(annotationType: typeof T, classReference: Object, methodName: string, parameterIndex: number): T | undefined {
             if (methodName === 'constructor') {
                 return undefined
             }

@@ -7,9 +7,16 @@ import {Session} from "express-session";
 import {validate} from "class-validator";
 import {ContractValidationException} from "../exceptions/exceptions";
 
-export class BodyResolverFactory implements ParameterResolverFactory<Request> {
+export abstract class RestParameterResolverFactory implements ParameterResolverFactory<Request> {
+    public abstract build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined
+}
 
-    build(instance: Object, methodName: string | symbol, parameterIndex: number): ParameterResolver<Request> | undefined {
+export interface RestParameterResolver extends ParameterResolver<Request> {
+    resolve(request: Request): Promise<any>
+}
+
+export class BodyResolverFactory extends RestParameterResolverFactory {
+    build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined {
         if (typeof methodName !== 'string') {
             return undefined
         }
@@ -23,7 +30,7 @@ export class BodyResolverFactory implements ParameterResolverFactory<Request> {
         const paramType = Reflect.getMetadata('design:paramtypes', instance, methodName)[parameterIndex]
 
         return {
-            async resolve(input: Request): any {
+            async resolve(input: Request): Promise<any> {
                 const body = plainToInstance(paramType, input.body)
                 const errors = await validate(body)
 
@@ -37,8 +44,8 @@ export class BodyResolverFactory implements ParameterResolverFactory<Request> {
     }
 }
 
-export class PathParamResolverFactory implements ParameterResolverFactory<Request> {
-    build(instance: Object, methodName: string | symbol, parameterIndex: number): ParameterResolver<Request> | undefined {
+export class PathParamResolverFactory extends RestParameterResolverFactory {
+    build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined {
         if (typeof methodName !== 'string') {
             return undefined
         }
@@ -50,15 +57,15 @@ export class PathParamResolverFactory implements ParameterResolverFactory<Reques
         }
 
         return {
-            async resolve(input: Request): any {
+            async resolve(input: Request): Promise<any> {
                 return Promise.resolve(input.params[pathParamAnnotation.paramName])
             }
         };
     }
 }
 
-export class QueryParamResolverFactory implements ParameterResolverFactory<Request> {
-    build(instance: Object, methodName: string | symbol, parameterIndex: number): ParameterResolver<Request> | undefined {
+export class QueryParamResolverFactory extends RestParameterResolverFactory {
+    build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined {
         if (typeof methodName !== 'string') {
             return undefined
         }
@@ -70,15 +77,15 @@ export class QueryParamResolverFactory implements ParameterResolverFactory<Reque
         }
 
         return {
-            async resolve(input: Request): any {
+            async resolve(input: Request): Promise<any> {
                 return Promise.resolve(input.query[queryParamAnnotation.paramName])
             }
         };
     }
 }
 
-export class SessionResolverFactory implements ParameterResolverFactory<Request> {
-    build(instance: Object, methodName: string | symbol, parameterIndex: number): ParameterResolver<Request> | undefined {
+export class SessionResolverFactory extends RestParameterResolverFactory {
+    build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined {
         if (typeof methodName !== 'string') {
             return undefined
         }
@@ -90,15 +97,15 @@ export class SessionResolverFactory implements ParameterResolverFactory<Request>
         }
 
         return {
-            async resolve(input: Request): any {
+            async resolve(input: Request): Promise<any> {
                 return Promise.resolve(input.session)
             }
         }
     }
 }
 
-export class HeaderResolverFactory implements ParameterResolverFactory<Request> {
-    build(instance: Object, methodName: string | symbol, parameterIndex: number): ParameterResolver<Request> | undefined {
+export class HeaderResolverFactory extends RestParameterResolverFactory {
+    build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined {
         if (typeof methodName !== 'string') {
             return undefined
         }
@@ -110,7 +117,7 @@ export class HeaderResolverFactory implements ParameterResolverFactory<Request> 
         }
 
         return {
-            async resolve(input: Request): any {
+            async resolve(input: Request): Promise<any> {
                 return Promise.resolve(input.header(headerAnnotation.headerName))
             }
         };

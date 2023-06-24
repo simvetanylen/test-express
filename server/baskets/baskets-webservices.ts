@@ -1,27 +1,28 @@
-import express from "express";
 import {BasketsService} from "./baskets-service";
-import {plainToInstance} from "class-transformer";
 import {AddArticle} from "./commands";
+import {Body, Get, PathParam, Post, RestController} from "../ivory/rest/decorators";
 
-const router = express.Router()
 
-const basketsService = new BasketsService()
+@RestController('/baskets')
+export class BasketsWebservices {
+    constructor(private readonly service: BasketsService) {
+    }
 
-router.get('/baskets', async (req, res) => {
-    res.json(await basketsService.findAll());
-})
+    @Get('/')
+    public async getAll() {
+        return this.service.findAll()
+    }
 
-router.post('/baskets', async (req, res) => {
-    const result = await basketsService.create()
-    res.json(result)
-})
+    @Post('/')
+    public async create() {
+        return this.service.create()
+    }
 
-router.post('/baskets/:id/articles', async (req, res) => {
-    const id = req?.params?.id;
-    const inst = plainToInstance(AddArticle, req.body as string)
-    const result = await basketsService.addArticle(id, inst)
-
-    res.json(result)
-})
-
-export default router
+    @Post('/:id/articles')
+    public async addArticle(
+        @PathParam('id') id: string,
+        @Body() command: AddArticle
+    ) {
+        return this.service.addArticle(id, command)
+    }
+}

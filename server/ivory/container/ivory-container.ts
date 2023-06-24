@@ -75,4 +75,16 @@ export class IvoryContainer {
 
         return instance
     }
+
+    public getBeans<BEAN>(type: typeof BEAN): BEAN[] {
+        const beans = []
+
+        for (let key of this.instances.keys()) {
+            if (key.prototype instanceof type) {
+                beans.push(this.getBean(key))
+            }
+        }
+
+        return beans
+    }
 }

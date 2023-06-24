@@ -1,42 +1,34 @@
 import {Request, RequestHandler, Router} from "express";
 import {HttpMethod} from "../ivory/rest/http-method";
 import {Annotations} from "../ivory/annotation/annotation";
-import {RequestMappingAnnotation} from "../ivory/rest/annotations";
+import {RequestMappingAnnotation, RestControllerAnnotation} from "../ivory/rest/annotations";
 import {createParameterResolutionFunction} from "../ivory/parameter-resolver/parameter-resolver";
 import {
     BodyResolverFactory, HeaderResolverFactory,
     PathParamResolverFactory,
-    QueryParamResolverFactory, SessionResolverFactory
+    QueryParamResolverFactory, RestParameterResolverFactory, SessionResolverFactory
 } from "../ivory/rest/parameter-resolvers";
 import {
-    ContractValidationExceptionHandler,
+    ContractValidationExceptionHandler, RestExceptionHandler,
     UnauthenticatedExceptionHandler,
     UnauthorizedExceptionHandler
 } from "../ivory/rest/exception-handlers";
+import {IvoryContainer} from "../ivory/container/ivory-container";
 
-const factories = [
-    new BodyResolverFactory(),
-    new PathParamResolverFactory(),
-    new QueryParamResolverFactory(),
-    new SessionResolverFactory(),
-    new HeaderResolverFactory(),
-]
 
-const exceptionHandlers = [
-    new UnauthenticatedExceptionHandler(),
-    new UnauthorizedExceptionHandler(),
-    new ContractValidationExceptionHandler()
-]
 
-export function transformToExpressRouter(webservices: Object): Router {
-    const router = Router()
+export function transformToExpressRouter(container: IvoryContainer, webservices: Object, annotation: RestControllerAnnotation): Router {
+    const paramFactories = container.getBeans(RestParameterResolverFactory)
+    const exceptionHandlers = container.getBeans(RestExceptionHandler)
+
+    const classRouter = Router({ mergeParams: true })
 
     Reflect.ownKeys(Object.getPrototypeOf(webservices)).forEach((key) => {
         if (typeof key === "string") {
             const requestMapping = Annotations.Method.first(RequestMappingAnnotation, webservices.constructor, key)
 
             if (requestMapping) {
-                const resolutionFunction = createParameterResolutionFunction<Request>(factories, webservices, key)
+                const resolutionFunction = createParameterResolutionFunction<Request>(paramFactories, webservices, key)
 
                 const handler: RequestHandler = async (req, res): Promise<void> => {
                     try {
@@ -62,26 +54,31 @@ export function transformToExpressRouter(webservices: Object): Router {
                     }
                 }
 
+                const methodRouter = Router({ mergeParams: true })
+                methodRouter.route(requestMapping.path)
+
                 switch (requestMapping.method) {
                     case HttpMethod.GET:
-                        router.get(requestMapping.path, handler)
+                        methodRouter.get(requestMapping.path, handler)
                         break
                     case HttpMethod.PUT:
-                        router.put(requestMapping.path, handler)
+                        methodRouter.put(requestMapping.path, handler)
                         break
                     case HttpMethod.POST:
-                        router.post(requestMapping.path, handler)
+                        methodRouter.post(requestMapping.path, handler)
                         break
                     case HttpMethod.PATCH:
-                        router.patch(requestMapping.path, handler)
+                        methodRouter.patch(requestMapping.path, handler)
                         break
                     case HttpMethod.DELETE:
-                        router.delete(requestMapping.path, handler)
+                        methodRouter.delete(requestMapping.path, handler)
                         break
                 }
+
+                classRouter.use(annotation.path, methodRouter)
             }
         }
     })
 
-    return router
+    return classRouter
 }

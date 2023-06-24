@@ -34,3 +34,11 @@ Pour plus tard :
     - ./commands
     - ./commands/create-article.ts
     - ./commands/create-article.tsx
+
+- check https://github.com/wessberg/DI
+
+- Gestion commandes avec un broker :
+    - Success => Related domain event
+    - Failure => CommandFailure<Exception>
+    - Uuid de la commande présente dans chaque cas.
+    - Utilisation d'un acteur pour lire le résultat de la commande

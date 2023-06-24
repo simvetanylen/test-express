@@ -19,4 +19,4 @@ export const QueryParam = (paramName: string) => MethodParamAnnotation(new Query
 export const Body = () => MethodParamAnnotation(new BodyAnnotation())
 export const Header = (headerName: string) => MethodParamAnnotation(new HeaderAnnotation(headerName))
 
-export const RestController = () => ClassAnnotation(new RestControllerAnnotation())
+export const RestController = (path: string) => ClassAnnotation(new RestControllerAnnotation(path))

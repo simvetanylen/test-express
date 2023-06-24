@@ -1,44 +1,47 @@
-import express from "express";
+import {Body, Get, Post, RestController} from "../ivory/rest/decorators";
+import {Session} from "express-session";
 
-const router = express.Router()
+class LoginCommand {
+    constructor(
+        readonly login: string,
+        readonly password: string
+    ) {}
+}
 
-const userId = '1'
-const login = 'test'
-const password = 'test'
 
-
-router.post('/auth/login', async (req, res) => {
-    if (req.body['login'] != login || req.body['password'] != password) {
-        res.status(400)
-        res.json({
-            'error' : 'wrong login'
-        })
-    } else {
-        req.session['subject'] = {
-            authenticated: true,
-            userId: userId,
-            role: 'EXEMPLE'
-        }
-        res.json({
-            "userId": userId
-        })
+@RestController('/auth')
+export class AuthenticationWebservices {
+    @Get('/')
+    public async getSession(session: Session) {
+        return Promise.resolve(session)
     }
-})
 
-router.post('/auth/logout', async (req, res) => {
-    if (req.session) {
-        req.session.destroy((err) => {
+    @Post("/login")
+    public async login(session: Session, @Body() command: LoginCommand) {
+        if (command.login != 'test' || command.password != 'test') {
+            return Promise.resolve({
+                error: 'wrong login'
+            })
+        } else {
+            session['subject'] = {
+                authenticated: true,
+                userId: 1,
+                role: 'EXEMPLE'
+            }
+            return Promise.resolve({
+                userId: 1
+            })
+        }
+    }
+
+    @Post('/logout')
+    public async logout(session: Session) {
+        session.destroy((err) => {
             console.log(err)
         })
+
+        return Promise.resolve({
+            logout : "ok"
+        })
     }
-
-    res.json({
-        "logout": "ok"
-    })
-})
-
-router.get('/auth', async (req, res) => {
-    res.json(req.session)
-})
-
-export default router
+}

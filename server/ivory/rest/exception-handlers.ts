@@ -1,20 +1,18 @@
 import {ContractValidationException, UnauthenticatedException, UnauthorizedException} from "../exceptions/exceptions";
 
-export interface ExceptionHandler {
-    canHandle(exception: any): boolean
-    handle(exception: any): {
-        status: number,
-        response: any
+export abstract class RestExceptionHandler<EXCEPTION> {
+    constructor(readonly type: typeof EXCEPTION) {
     }
+
+    canHandle(ex: any): boolean {
+        return ex instanceof this.type
+    }
+
+    abstract handle(exception: EXCEPTION): { status: number, response: any }
 }
 
-export class UnauthenticatedExceptionHandler implements ExceptionHandler {
-
-    canHandle(exception: any): boolean {
-        return exception instanceof UnauthenticatedException
-    }
-
-    handle(exception: any): { status: number; response: any } {
+export class UnauthenticatedExceptionHandler extends RestExceptionHandler<UnauthenticatedException> {
+    handle(exception: UnauthenticatedException): { status: number; response: any } {
         return {
             response: {
                 message: 'Unauthenticated'
@@ -24,13 +22,8 @@ export class UnauthenticatedExceptionHandler implements ExceptionHandler {
     }
 }
 
-export class UnauthorizedExceptionHandler implements ExceptionHandler {
-
-    canHandle(exception: any): boolean {
-        return exception instanceof UnauthorizedException
-    }
-
-    handle(exception: any): { status: number; response: any } {
+export class UnauthorizedExceptionHandler extends RestExceptionHandler<UnauthorizedException> {
+    handle(exception: UnauthorizedException): { status: number; response: any } {
         return {
             response: {
                 message: 'Unauthorized'
@@ -40,13 +33,8 @@ export class UnauthorizedExceptionHandler implements ExceptionHandler {
     }
 }
 
-export class ContractValidationExceptionHandler implements ExceptionHandler {
-
-    canHandle(exception: any): boolean {
-        return exception instanceof ContractValidationException
-    }
-
-    handle(exception: any): { status: number; response: any } {
+export class ContractValidationExceptionHandler extends RestExceptionHandler<ContractValidationException> {
+    handle(exception: ContractValidationException): { status: number; response: any } {
         const contractValidationException = exception as ContractValidationException
 
         return {

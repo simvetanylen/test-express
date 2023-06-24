@@ -12,6 +12,7 @@ export class RequestMappingAnnotation {
 
 export class RestControllerAnnotation {
 
+    constructor(readonly path: string) {}
 }
 
 export class PathParamAnnotation {
