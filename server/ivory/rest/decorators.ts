@@ -8,11 +8,11 @@ import {
     RequestMappingAnnotation, RestControllerAnnotation
 } from "./annotations";
 
-export const Get = (path: string) => MethodAnnotation(new RequestMappingAnnotation(HttpMethod.GET, path))
-export const Post = (path: string) => MethodAnnotation(new RequestMappingAnnotation(HttpMethod.POST, path))
-export const Patch = (path: string) => MethodAnnotation(new RequestMappingAnnotation(HttpMethod.PATCH, path))
-export const Put = (path: string) => MethodAnnotation(new RequestMappingAnnotation(HttpMethod.PUT, path))
-export const Delete = (path: string) => MethodAnnotation(new RequestMappingAnnotation(HttpMethod.DELETE, path))
+export const Get = (path: string) => MethodAnnotation(new RequestMappingAnnotation('GET', path))
+export const Post = (path: string) => MethodAnnotation(new RequestMappingAnnotation('POST', path))
+export const Patch = (path: string) => MethodAnnotation(new RequestMappingAnnotation('PATCH', path))
+export const Put = (path: string) => MethodAnnotation(new RequestMappingAnnotation('PUT', path))
+export const Delete = (path: string) => MethodAnnotation(new RequestMappingAnnotation('DELETE', path))
 
 export const PathParam = (paramName: string) => MethodParamAnnotation(new PathParamAnnotation(paramName))
 export const QueryParam = (paramName: string) => MethodParamAnnotation(new QueryParamAnnotation(paramName))

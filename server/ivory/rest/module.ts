@@ -141,19 +141,19 @@ export class RestModule implements IvoryModule {
         methodRouter.route(requestMapping.path)
 
         switch (requestMapping.method) {
-            case HttpMethod.GET:
+            case 'GET':
                 methodRouter.get(requestMapping.path, handler)
                 break
-            case HttpMethod.PUT:
+            case 'PUT':
                 methodRouter.put(requestMapping.path, handler)
                 break
-            case HttpMethod.POST:
+            case 'POST':
                 methodRouter.post(requestMapping.path, handler)
                 break
-            case HttpMethod.PATCH:
+            case 'PATCH':
                 methodRouter.patch(requestMapping.path, handler)
                 break
-            case HttpMethod.DELETE:
+            case 'DELETE':
                 methodRouter.delete(requestMapping.path, handler)
                 break
         }
