@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import {ClassConstructor} from "class-transformer";
 
 const IVORY_ANNOTATIONS = 'ivory:annotations'
 
@@ -144,7 +145,7 @@ export class Annotations {
 }
 
 export function ClassAnnotation(annotation: Object) {
-    return function (target: Object) {
+    return function <T>(target: ClassConstructor<T>) {
         Annotations.Class.annotate(annotation, target)
     }
 }
