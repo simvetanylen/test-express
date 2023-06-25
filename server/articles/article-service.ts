@@ -1,18 +1,18 @@
 import {CreateArticle, UpdateArticle} from "./commands";
 import {MongoClient, ObjectId} from "mongodb";
 import {eventEmitter} from "../event-emitter";
-import {DomainEventPublisher} from "../custom/domain-event-publisher";
+import {ApplicationEventPublisher} from "../ivory/application-event/application-event-publisher";
 import {ArticleCreated, ArticleDeleted} from "./domain-events";
 import {ArticleRepository} from "./article-repository";
 import {Injectable} from "../ivory/container/ivory-container";
 
 @Injectable()
 export class ArticleService {
-    publisher: DomainEventPublisher
+    publisher: ApplicationEventPublisher
 
     constructor(private readonly repository: ArticleRepository) {
         this.repository = repository
-        this.publisher = new DomainEventPublisher(eventEmitter)
+        this.publisher = new ApplicationEventPublisher(eventEmitter)
     }
 
     public async create(command: CreateArticle) {

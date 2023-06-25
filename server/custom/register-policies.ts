@@ -1,15 +1,21 @@
 import EventEmitter from "events";
-import {POLICIES_METADATA} from "./constants";
+import {Annotations} from "../ivory/annotation/annotation";
+import {ApplicationEventAnnotation, EventHandlerAnnotation} from "../ivory/application-event/annotations";
 
-export function registerPolicies(eventEmitter: EventEmitter, policyHolder: object) {
-    const targets = Reflect.getMetadata(POLICIES_METADATA, policyHolder) as {
-        method: string,
-        eventName: string
-    }[];
+export function registerPolicies(eventEmitter: EventEmitter, instance: object) {
+    Reflect.ownKeys(Object.getPrototypeOf(instance)).forEach((key) => {
+        if (typeof key === "string") {
+            const annotation = Annotations.Method.first(EventHandlerAnnotation, instance.constructor, key)
 
-    targets.forEach((target) => {
-        eventEmitter.addListener(target.eventName, (event: any) => {
-            policyHolder[target.method](event)
-        })
+            if (annotation) {
+                const paramType = Reflect.getMetadata('design:paramtypes', instance, key)[0]
+                const eventAnnotation = Annotations.Class.first(ApplicationEventAnnotation, paramType)
+                const handler = instance[key].bind(instance)
+
+                eventEmitter.addListener(eventAnnotation.eventName, (event: any) => {
+                    handler(event)
+                })
+            }
+        }
     })
 }

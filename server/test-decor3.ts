@@ -15,8 +15,17 @@ import {BasketsService} from "./baskets/baskets-service";
 import {BasketsWebservices} from "./baskets/baskets-webservices";
 import {UnauthenticatedExceptionHandler} from "./ivory/rest/exception-handlers";
 import {UnauthenticatedException} from "./ivory/exceptions/exceptions";
+import {BasketPolicies} from "./baskets/policies";
+import {registerPolicies} from "./custom/register-policies";
+import {eventEmitter} from "./event-emitter";
+import {ApplicationEventPublisher} from "./ivory/application-event/application-event-publisher";
+import {ArticleCreated} from "./articles/domain-events";
+import {EventHandlerAnnotation} from "./ivory/application-event/annotations";
 
-const handler = new UnauthenticatedExceptionHandler(UnauthenticatedException)
-const ex = new UnauthenticatedException()
+const basketPolicies = new BasketPolicies()
 
-console.log(handler.canHandle(ex))
+registerPolicies(eventEmitter, basketPolicies)
+//
+const eventPublisher = new ApplicationEventPublisher(eventEmitter)
+//
+eventPublisher.publish(new ArticleCreated('test'))

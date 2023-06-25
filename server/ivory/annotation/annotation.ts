@@ -76,7 +76,7 @@ export class Annotations {
 
             const metadata = Reflect.getMetadata(IVORY_ANNOTATIONS, classReference) as IvoryAnnotationsModel
 
-            if (!(typeof metadata.methodsAnnotations === 'object')) {
+            if (!metadata?.methodsAnnotations) {
                 return undefined
             }
 

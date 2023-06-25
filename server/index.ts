@@ -1,8 +1,5 @@
-import {eventEmitter} from "./event-emitter";
-import {registerPolicies} from "./custom/register-policies";
-import {BasketPolicies} from "./baskets/policies";
 import {BasketsService} from "./baskets/baskets-service";
-import {MongoClient} from "mongodb";
+import {MongoClient, Db} from "mongodb";
 import {IvoryApplication} from "./ivory/core/ivory-application";
 import {RestModule} from "./ivory/rest/module";
 import sessions from "express-session";
@@ -12,18 +9,14 @@ import {ArticleService} from "./articles/article-service";
 import {ArticlesWebservices} from "./articles/articles-webservices";
 import {AuthenticationWebservices} from "./authentication/authentication-webservices";
 import {BasketsWebservices} from "./baskets/baskets-webservices";
+import {MongoDbModule} from "./ivory/mongodb/module";
+import {BasketPolicies} from "./baskets/policies";
+import {registerPolicies} from "./custom/register-policies";
+import {ApplicationEventModule} from "./ivory/application-event/module";
 
-const port = 3000;
+// const basketPolicies = new BasketPolicies(basketService)
 
-const basketService = new BasketsService()
-
-const basketPolicies = new BasketPolicies(basketService)
-
-registerPolicies(eventEmitter, basketPolicies)
-
-const mongoClient = new MongoClient('mongodb://root:root@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false')
-const mongoDb = mongoClient.db('test')
-
+// registerPolicies(eventEmitter, basketPolicies)
 
 new IvoryApplication()
     .registerModule(new RestModule({
@@ -51,11 +44,15 @@ new IvoryApplication()
             ]
         }
     }))
-    .registerInstance(new ArticleRepository(mongoDb.collection('articles'), Article))
-    .registerBeans(ArticleService, ArticlesWebservices)
+    .registerModule(new MongoDbModule({
+        url: 'mongodb://root:root@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false'
+    }))
+    .registerModule(new ApplicationEventModule())
+    .registerBeans(ArticleRepository, ArticleService, ArticlesWebservices)
     .registerBeans(AuthenticationWebservices)
-    .registerBeans(BasketsService, BasketsWebservices)
+    .registerBeans(BasketsService, BasketsWebservices, BasketPolicies)
     .start()
+
 
 // srvapp.get('/', (req, res) => {
 //     const app = ReactDOMServer.renderToString(React.createElement(App));

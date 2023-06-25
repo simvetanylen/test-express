@@ -2,11 +2,8 @@
 - ORM subject filters
 - Command security filters
 - SIREN api
-- Container
 - Command handler
 - Frontend
-- Config
-- Async Domain Events
 - Logger
 - Retries on conflict (mongo)
 - Note : les regles de sécurité doivent être mise dans le retry, parce que l'update d'aggregat peut changer le résultat de la regle
@@ -14,7 +11,6 @@
 
 Pour plus tard :
 - Event sourced ORM
-- Cors
 - ORM
   - How to update multiple documents at once ?
   - How to ignore if a document is already deleted ?
@@ -27,6 +23,7 @@ Pour plus tard :
 - headless crm integ
 - tailwindui ?
 - web-vitals
+- workers
 
 //    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
 

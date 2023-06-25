@@ -1,7 +1,7 @@
-import {DomainEvent} from "../custom/decorators/domain-event";
+import {ApplicationEvent} from "../ivory/application-event/decorators";
 
 
-@DomainEvent('articles/created')
+@ApplicationEvent('articles/created')
 export class ArticleCreated {
     id: string
 
@@ -11,7 +11,7 @@ export class ArticleCreated {
     }
 }
 
-@DomainEvent('articles/deleted')
+@ApplicationEvent('articles/deleted')
 export class ArticleDeleted {
     id: string
 

@@ -1,36 +1,26 @@
-import {MongoClient, ObjectId} from "mongodb";
+import {Collection, MongoClient, ObjectId} from "mongodb";
 import {AddArticle, RemoveArticle} from "./commands";
 import {plainToInstance} from "class-transformer";
 import {Basket} from "./basket";
+import {Injectable} from "../ivory/container/ivory-container";
 
+@Injectable()
 export class BasketsService {
-    db: string = 'test';
-    collection: string = 'baskets';
-    uri: string = 'mongodb://root:root@localhost:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false';
+    collection: Collection
 
-    client: MongoClient
-
-    constructor() {
-        this.client = new MongoClient(this.uri)
-    }
-
-    public async connect() {
-        await this.client.connect()
+    constructor(client: MongoClient) {
+        this.collection = client.db('test').collection('baskets')
     }
 
     public async create() {
-        return await this.client
-            .db(this.db)
-            .collection(this.collection)
+        return await this.collection
             .insertOne({
                 content: []
             })
     }
 
     public async addArticle(id: string, command: AddArticle) {
-        const doc = await this.client
-            .db(this.db)
-            .collection(this.collection)
+        const doc = await this.collection
             .findOne({
                 _id: new ObjectId(id)
             })
@@ -42,9 +32,7 @@ export class BasketsService {
             quantity: command.quantity
         })
 
-        return await this.client
-            .db(this.db)
-            .collection(this.collection)
+        return await this.collection
             .updateOne({
                 _id: new ObjectId(id)
             }, {
@@ -55,9 +43,7 @@ export class BasketsService {
     }
 
     public async removeArticle(id: string, command: RemoveArticle) {
-        const doc = await this.client
-            .db(this.db)
-            .collection(this.collection)
+        const doc = await this.collection
             .findOne({
                 _id: new ObjectId(id)
             })
@@ -68,9 +54,7 @@ export class BasketsService {
             return element.articleRef != command.articleRef
         })
 
-        return await this.client
-            .db(this.db)
-            .collection(this.collection)
+        return await this.collection
             .updateOne({
                 _id: new ObjectId(id)
             }, {
@@ -81,17 +65,13 @@ export class BasketsService {
     }
 
     public async findAll() {
-        return await this.client
-            .db(this.db)
-            .collection(this.collection)
+        return await this.collection
             .find({})
             .toArray()
     }
 
     public async findBasketsWithArticle(articleRef: string) {
-        return (await this.client
-            .db(this.db)
-            .collection(this.collection)
+        return (await this.collection
             .find({
                 content: {
                     $elemMatch: {
