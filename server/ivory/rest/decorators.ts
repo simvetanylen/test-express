@@ -1,4 +1,4 @@
-import {ClassAnnotation, MethodAnnotation, MethodParamAnnotation} from "../annotation/annotation";
+import {ClassAnnotation, MethodAnnotation, MethodParamAnnotation} from "../core/annotation";
 import {HttpMethod} from "./http-method";
 import {
     BodyAnnotation,

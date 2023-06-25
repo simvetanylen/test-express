@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import {Annotations} from "../annotation/annotation";
+import {Annotations} from "../core/annotation";
 import {ApplicationEventAnnotation} from "./annotations";
 
 export class ApplicationEventPublisher {

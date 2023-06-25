@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import {ClassConstructor} from "class-transformer";
-import {Annotations} from "../annotation/annotation";
+import {Annotations} from "./annotation";
 
 export function Injectable() {
     return function <T>(target: ClassConstructor<T>) {}
@@ -10,7 +10,7 @@ export class IvoryContainer {
 
     private instances: Map<ClassConstructor<any>, (() => any) | undefined> = new Map()
 
-    public register(...types: ClassConstructor<any>[]) {
+    public registerBeans(...types: ClassConstructor<any>[]) {
         for (let type of types) {
             if (!this.instances.has(type)) {
                 this.instances.set(type, undefined)

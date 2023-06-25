@@ -1,6 +1,6 @@
 import {IvoryModule} from "../core/ivory-application";
 import sessions, {SessionOptions} from "express-session";
-import {IvoryContainer} from "../container/ivory-container";
+import {IvoryContainer} from "../core/ivory-container";
 import {
     BodyResolverFactory, HeaderResolverFactory,
     PathParamResolverFactory,
@@ -16,8 +16,8 @@ import {ContractValidationException, UnauthenticatedException, UnauthorizedExcep
 import express, {Request, RequestHandler, Router} from "express";
 import cookieParser from "cookie-parser";
 import {RequestMappingAnnotation, RestControllerAnnotation} from "./annotations";
-import {Annotations} from "../annotation/annotation";
-import {createParameterResolutionFunction} from "../parameter-resolver/parameter-resolver";
+import {Annotations} from "../core/annotation";
+import {createParameterResolutionFunction} from "../core/parameter-resolver";
 import {HttpMethod} from "./http-method";
 import cors from 'cors'
 
@@ -39,7 +39,7 @@ export class RestModule implements IvoryModule {
     constructor(private readonly configuration: RestModuleConfiguration) {}
 
     setup(container: IvoryContainer): void {
-        container.register(
+        container.registerBeans(
             BodyResolverFactory,
             PathParamResolverFactory,
             QueryParamResolverFactory,
@@ -47,7 +47,7 @@ export class RestModule implements IvoryModule {
         )
 
         if (this.configuration.sessions?.enabled) {
-            container.register(SessionResolverFactory)
+            container.registerBeans(SessionResolverFactory)
         }
 
         container.registerInstance(new UnauthenticatedExceptionHandler(UnauthenticatedException))

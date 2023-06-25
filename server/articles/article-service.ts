@@ -4,7 +4,7 @@ import {eventEmitter} from "../event-emitter";
 import {ApplicationEventPublisher} from "../ivory/application-event/application-event-publisher";
 import {ArticleCreated, ArticleDeleted} from "./domain-events";
 import {ArticleRepository} from "./article-repository";
-import {Injectable} from "../ivory/container/ivory-container";
+import {Injectable} from "../ivory/core/ivory-container";
 
 @Injectable()
 export class ArticleService {

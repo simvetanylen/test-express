@@ -1,6 +1,6 @@
-import {ParameterResolver, ParameterResolverFactory} from "../parameter-resolver/parameter-resolver";
+import {ParameterResolver, ParameterResolverFactory} from "../core/parameter-resolver";
 import {Request} from "express";
-import {Annotations} from "../annotation/annotation";
+import {Annotations} from "../core/annotation";
 import {BodyAnnotation, HeaderAnnotation, PathParamAnnotation, QueryParamAnnotation} from "./annotations";
 import {plainToInstance} from "class-transformer";
 import {Session} from "express-session";

@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import {Annotations} from "../ivory/annotation/annotation";
+import {Annotations} from "../ivory/core/annotation";
 import {ApplicationEventAnnotation, EventHandlerAnnotation} from "../ivory/application-event/annotations";
 
 export function registerPolicies(eventEmitter: EventEmitter, instance: object) {

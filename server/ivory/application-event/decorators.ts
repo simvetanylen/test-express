@@ -1,4 +1,4 @@
-import {ClassAnnotation, MethodAnnotation} from "../annotation/annotation";
+import {ClassAnnotation, MethodAnnotation} from "../core/annotation";
 import {ApplicationEventAnnotation, EventHandlerAnnotation, EventServiceAnnotation} from "./annotations";
 
 export const ApplicationEvent = (eventName: string) => ClassAnnotation(new ApplicationEventAnnotation(eventName))

@@ -1,6 +1,6 @@
 import "reflect-metadata"
-import {Injectable, IvoryContainer} from "./ivory/container/ivory-container";
-import {Annotations} from "./ivory/annotation/annotation";
+import {Injectable, IvoryContainer} from "./ivory/core/ivory-container";
+import {Annotations} from "./ivory/core/annotation";
 import {
     BodyResolverFactory, HeaderResolverFactory,
     PathParamResolverFactory,
@@ -17,7 +17,6 @@ import {UnauthenticatedExceptionHandler} from "./ivory/rest/exception-handlers";
 import {UnauthenticatedException} from "./ivory/exceptions/exceptions";
 import {BasketPolicies} from "./baskets/policies";
 import {registerPolicies} from "./custom/register-policies";
-import {eventEmitter} from "./event-emitter";
 import {ApplicationEventPublisher} from "./ivory/application-event/application-event-publisher";
 import {ArticleCreated} from "./articles/domain-events";
 import {EventHandlerAnnotation} from "./ivory/application-event/annotations";

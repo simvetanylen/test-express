@@ -1,4 +1,4 @@
-import {IvoryContainer} from "../container/ivory-container";
+import {IvoryContainer} from "./ivory-container";
 import {ClassConstructor} from "class-transformer";
 
 export interface IvoryModule {
@@ -16,7 +16,7 @@ export class IvoryApplication {
     }
 
     public registerBeans(...types: ClassConstructor<any>[]) {
-        this.container.register(...types)
+        this.container.registerBeans(...types)
         return this
     }
 

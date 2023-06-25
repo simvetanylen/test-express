@@ -1,9 +1,9 @@
 import {IvoryModule} from "../core/ivory-application";
 import EventEmitter from "events";
-import {IvoryContainer} from "../container/ivory-container";
+import {IvoryContainer} from "../core/ivory-container";
 import {ApplicationEventPublisher} from "./application-event-publisher";
 import {ApplicationEventAnnotation, EventHandlerAnnotation, EventServiceAnnotation} from "./annotations";
-import {Annotations} from "../annotation/annotation";
+import {Annotations} from "../core/annotation";
 
 export class ApplicationEventModule implements IvoryModule {
 
