@@ -1,7 +1,7 @@
 import {OptimisticRepository} from "../ivory/orm/optimistic-repository";
 import {Article} from "./article";
 import {Collection, MongoClient} from "mongodb";
-import {Injectable} from "../ivory/core/ivory-container";
+import {Injectable} from "../ivory/core/container";
 
 @Injectable()
 export class ArticleRepository extends OptimisticRepository<Article> {

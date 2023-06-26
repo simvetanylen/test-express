@@ -1,5 +1,5 @@
-import {IvoryModule} from "../core/ivory-application";
-import {IvoryContainer} from "../core/ivory-container";
+import {IvoryModule} from "../core/application";
+import {IvoryContainer} from "../core/container";
 import {MongoClient, MongoClientOptions} from "mongodb";
 
 export interface MongoDbModuleConfiguration {

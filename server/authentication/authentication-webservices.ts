@@ -1,5 +1,6 @@
 import {Body, Get, Post, RestController} from "../ivory/rest/decorators";
 import {Session} from "express-session";
+import {MySubject} from "./subject";
 
 class LoginCommand {
     constructor(
@@ -12,8 +13,8 @@ class LoginCommand {
 @RestController('/auth')
 export class AuthenticationWebservices {
     @Get('/')
-    public async getSession(session: Session) {
-        return Promise.resolve(session)
+    public async getSubject(subject: MySubject) {
+        return Promise.resolve(subject)
     }
 
     @Post("/login")

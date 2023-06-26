@@ -1,5 +1,5 @@
 import {BasketsService} from "./baskets/baskets-service";
-import {IvoryApplication} from "./ivory/core/ivory-application";
+import {IvoryApplication} from "./ivory/core/application";
 import {RestModule} from "./ivory/rest/module";
 import sessions from "express-session";
 import {ArticleRepository} from "./articles/article-repository";
@@ -10,14 +10,15 @@ import {BasketsWebservices} from "./baskets/baskets-webservices";
 import {MongoDbModule} from "./ivory/mongodb/module";
 import {BasketPolicies} from "./baskets/policies";
 import {ApplicationEventModule} from "./ivory/application-event/module";
+import {MySubject} from "./authentication/subject";
 
 new IvoryApplication()
     .registerModule(new RestModule({
         port: 3000,
         basePath: '/api',
         staticFiles: './dist/static',
+        subjectClass: MySubject,
         sessions: {
-            enabled: true,
             name: 'test-session',
             secret: 'random secret to set',
             saveUninitialized: false,
@@ -31,7 +32,6 @@ new IvoryApplication()
             store: new sessions.MemoryStore()
         },
         cors: {
-            enabled: true,
             allowedOrigins: [
                 'google.com'
             ]

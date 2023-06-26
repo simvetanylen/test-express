@@ -2,10 +2,11 @@ import {ParameterResolver, ParameterResolverFactory} from "../core/parameter-res
 import {Request} from "express";
 import {Annotations} from "../core/annotation";
 import {BodyAnnotation, HeaderAnnotation, PathParamAnnotation, QueryParamAnnotation} from "./annotations";
-import {plainToInstance} from "class-transformer";
+import {ClassConstructor, plainToInstance} from "class-transformer";
 import {Session} from "express-session";
 import {validate} from "class-validator";
-import {ContractValidationException} from "../exceptions/exceptions";
+import {ContractValidationException} from "./exceptions";
+import {AbstractSubject} from "./abstract-subject";
 
 export abstract class RestParameterResolverFactory implements ParameterResolverFactory<Request> {
     public abstract build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined
@@ -97,8 +98,44 @@ export class SessionResolverFactory extends RestParameterResolverFactory {
         }
 
         return {
-            async resolve(input: Request): Promise<any> {
+            async resolve(input: Request): Promise<Session> {
                 return Promise.resolve(input.session)
+            }
+        }
+    }
+}
+
+export class SubjectSessionResolverFactory<SUBJECT extends AbstractSubject> extends RestParameterResolverFactory {
+
+    constructor(private readonly subjectClass: ClassConstructor<SUBJECT>) {
+        super();
+    }
+
+    build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined {
+        if (typeof methodName !== 'string') {
+            return undefined
+        }
+
+        const paramType = Reflect.getMetadata('design:paramtypes', instance, methodName)[parameterIndex]
+
+        if (paramType !== this.subjectClass) {
+            return undefined
+        }
+
+        const subjectClass = this.subjectClass
+
+        return {
+            async resolve(input: Request): Promise<SUBJECT> {
+                const session = input.session as {
+                    subject?: any
+                }
+
+                const currentSubject = session.subject || {
+                    authenticated: false,
+                    permissions: []
+                }
+
+                return Promise.resolve(plainToInstance(subjectClass, currentSubject))
             }
         }
     }

@@ -2,7 +2,7 @@ import {Collection, MongoClient, ObjectId} from "mongodb";
 import {AddArticle, RemoveArticle} from "./commands";
 import {plainToInstance} from "class-transformer";
 import {Basket} from "./basket";
-import {Injectable} from "../ivory/core/ivory-container";
+import {Injectable} from "../ivory/core/container";
 
 @Injectable()
 export class BasketsService {

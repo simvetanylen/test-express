@@ -1,18 +1,18 @@
-import {IvoryModule} from "../core/ivory-application";
+import {IvoryModule} from "../core/application";
 import sessions, {SessionOptions} from "express-session";
-import {IvoryContainer} from "../core/ivory-container";
+import {IvoryContainer} from "../core/container";
 import {
     BodyResolverFactory, HeaderResolverFactory,
     PathParamResolverFactory,
     QueryParamResolverFactory, RestParameterResolverFactory,
-    SessionResolverFactory
+    SessionResolverFactory, SubjectSessionResolverFactory
 } from "./parameter-resolvers";
 import {
     ContractValidationExceptionHandler, RestExceptionHandler,
     UnauthenticatedExceptionHandler,
     UnauthorizedExceptionHandler
 } from "./exception-handlers";
-import {ContractValidationException, UnauthenticatedException, UnauthorizedException} from "../exceptions/exceptions";
+import {ContractValidationException, UnauthenticatedException, UnauthorizedException} from "./exceptions";
 import express, {Request, RequestHandler, Router} from "express";
 import cookieParser from "cookie-parser";
 import {RequestMappingAnnotation, RestControllerAnnotation} from "./annotations";
@@ -20,23 +20,22 @@ import {Annotations} from "../core/annotation";
 import {createParameterResolutionFunction} from "../core/parameter-resolver";
 import cors from 'cors'
 import {ClassConstructor} from "class-transformer";
+import {AbstractSubject} from "./abstract-subject";
 
-export interface RestModuleConfiguration {
+export interface RestModuleConfiguration<SUBJECT extends AbstractSubject> {
     port: number
     staticFiles?: string
     basePath: string
-    sessions?: {
-        enabled: boolean
-    } & SessionOptions
+    sessions?: SessionOptions
     cors?: {
-        enabled: boolean
         allowedOrigins?: string[]
     }
+    subjectClass?: ClassConstructor<SUBJECT>
 }
 
-export class RestModule implements IvoryModule {
+export class RestModule<SUBJECT extends AbstractSubject> implements IvoryModule {
 
-    constructor(private readonly configuration: RestModuleConfiguration) {}
+    constructor(private readonly configuration: RestModuleConfiguration<SUBJECT>) {}
 
     setup(container: IvoryContainer): void {
         container.registerBeans(
@@ -46,8 +45,12 @@ export class RestModule implements IvoryModule {
             HeaderResolverFactory
         )
 
-        if (this.configuration.sessions?.enabled) {
+        if (this.configuration.sessions !== undefined) {
             container.registerBeans(SessionResolverFactory)
+
+            if (this.configuration.subjectClass !== undefined) {
+                container.registerInstance(new SubjectSessionResolverFactory(this.configuration.subjectClass))
+            }
         }
 
         container.registerInstance(new UnauthenticatedExceptionHandler(UnauthenticatedException))
@@ -59,7 +62,7 @@ export class RestModule implements IvoryModule {
         const server = express();
         server.use(express.json())
 
-        if (this.configuration.cors?.enabled) {
+        if (this.configuration.cors !== undefined) {
             const corsConfig = {
                 origin: this.configuration.cors.allowedOrigins
             }
@@ -68,7 +71,7 @@ export class RestModule implements IvoryModule {
             server.options('*', cors(corsConfig))
         }
 
-        if (this.configuration.sessions?.enabled) {
+        if (this.configuration.sessions !== undefined) {
             server.use(sessions(this.configuration.sessions))
             server.use(cookieParser())
         }
@@ -79,11 +82,11 @@ export class RestModule implements IvoryModule {
 
         // TODO : cast not really clean
         const paramFactories = container.getBeans(RestParameterResolverFactory as ClassConstructor<RestParameterResolverFactory>)
+
         const exceptionHandlers = container.getBeans(RestExceptionHandler as ClassConstructor<RestExceptionHandler<any>>)
         const restControllers = container.getBeansByClassAnnotation(RestControllerAnnotation)
 
         for (let restController of restControllers) {
-            // server.use(this.configuration.basePath, transformToExpressRouter(container, restController.bean, restController.annotation as RestControllerAnnotation)))
             server.use(this.configuration.basePath, RestModule.transformClass(restController.annotation.path, restController.bean, paramFactories, exceptionHandlers))
         }
 

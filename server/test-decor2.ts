@@ -39,7 +39,7 @@ const client = new MongoClient('mongodb://root:root@localhost:27017/?authSource=
 const db = client.db('test')
 const collection = db.collection('articles')
 
-const repo = new ArticleRepository(collection, Article)
+const repo = new ArticleRepository(client)
 
 // repo.create({
 //     name: 'test'

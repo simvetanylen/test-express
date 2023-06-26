@@ -1,4 +1,4 @@
-import {ContractValidationException, UnauthenticatedException, UnauthorizedException} from "../exceptions/exceptions";
+import {ContractValidationException, UnauthenticatedException, UnauthorizedException} from "./exceptions";
 import {ClassConstructor} from "class-transformer";
 
 export abstract class RestExceptionHandler<EXCEPTION> {

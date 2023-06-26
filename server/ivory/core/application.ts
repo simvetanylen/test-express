@@ -1,4 +1,4 @@
-import {IvoryContainer} from "./ivory-container";
+import {IvoryContainer} from "./container";
 import {ClassConstructor} from "class-transformer";
 
 export interface IvoryModule {

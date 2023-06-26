@@ -1,6 +1,6 @@
-import {IvoryModule} from "../core/ivory-application";
+import {IvoryModule} from "../core/application";
 import EventEmitter from "events";
-import {IvoryContainer} from "../core/ivory-container";
+import {IvoryContainer} from "../core/container";
 import {ApplicationEventPublisher} from "./application-event-publisher";
 import {ApplicationEventAnnotation, EventHandlerAnnotation, EventServiceAnnotation} from "./annotations";
 import {Annotations} from "../core/annotation";
