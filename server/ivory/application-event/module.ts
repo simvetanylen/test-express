@@ -21,9 +21,15 @@ export class ApplicationEventModule implements IvoryModule {
                 if (typeof key === "string") {
                     const annotation = Annotations.Method.first(EventHandlerAnnotation, beanDef.bean.constructor, key)
 
-                    if (annotation) {
+                    if (annotation !== undefined) {
                         const paramType = Reflect.getMetadata('design:paramtypes', beanDef.bean, key)[0]
                         const eventAnnotation = Annotations.Class.first(ApplicationEventAnnotation, paramType)
+
+                        if (eventAnnotation?.eventName === undefined) {
+                            throw Error('Events should be annotated')
+                        }
+
+                        // @ts-ignore
                         const handler = beanDef.bean[key].bind(beanDef.bean)
 
                         this.eventEmitter.addListener(eventAnnotation.eventName, (event: any) => {

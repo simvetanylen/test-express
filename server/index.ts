@@ -1,22 +1,15 @@
 import {BasketsService} from "./baskets/baskets-service";
-import {MongoClient, Db} from "mongodb";
 import {IvoryApplication} from "./ivory/core/ivory-application";
 import {RestModule} from "./ivory/rest/module";
 import sessions from "express-session";
 import {ArticleRepository} from "./articles/article-repository";
-import {Article} from "./articles/article";
 import {ArticleService} from "./articles/article-service";
 import {ArticlesWebservices} from "./articles/articles-webservices";
 import {AuthenticationWebservices} from "./authentication/authentication-webservices";
 import {BasketsWebservices} from "./baskets/baskets-webservices";
 import {MongoDbModule} from "./ivory/mongodb/module";
 import {BasketPolicies} from "./baskets/policies";
-import {registerPolicies} from "./custom/register-policies";
 import {ApplicationEventModule} from "./ivory/application-event/module";
-
-// const basketPolicies = new BasketPolicies(basketService)
-
-// registerPolicies(eventEmitter, basketPolicies)
 
 new IvoryApplication()
     .registerModule(new RestModule({

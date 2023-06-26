@@ -29,17 +29,17 @@ export class Annotations {
 
     static Class = class {
         static annotate<T extends Object>(annotation: T, classReference: Object) {
-            let metadata = Annotations.getAnnotations(classReference)
+            let metadata = Annotations.getMetadata(classReference)
 
             metadata.classAnnotations.push({
                 classType: annotation.constructor,
                 value: annotation
             })
 
-            Annotations.setAnnotations(classReference, metadata)
+            Annotations.setMetadata(classReference, metadata)
         }
 
-        static first<T>(annotationType: typeof T, classReference: Object): T | undefined {
+        static first<T>(annotationType: ClassConstructor<T>, classReference: Object): T | undefined {
             const metadata = Reflect.getMetadata(IVORY_ANNOTATIONS, classReference) as IvoryAnnotationsModel
 
             if (!metadata?.classAnnotations) {
@@ -57,7 +57,7 @@ export class Annotations {
                 throw Error('Constructor not supported')
             }
 
-            let metadata = Annotations.getAnnotations(classReference)
+            let metadata = Annotations.getMetadata(classReference)
 
             if (!metadata.methodsAnnotations[methodName]) {
                 metadata.methodsAnnotations[methodName] = []
@@ -67,10 +67,10 @@ export class Annotations {
                 classType: annotation.constructor,
                 value: annotation
             })
-            Annotations.setAnnotations(classReference, metadata)
+            Annotations.setMetadata(classReference, metadata)
         }
 
-        static first<T>(annotationType: typeof T, classReference: Object, methodName: string): T | undefined {
+        static first<T>(annotationType: ClassConstructor<T>, classReference: Object, methodName: string): T | undefined {
             if (methodName === 'constructor') {
                 return undefined
             }
@@ -96,7 +96,7 @@ export class Annotations {
                 throw Error('Constructor not supported')
             }
 
-            let metadata = Annotations.getAnnotations(classReference)
+            let metadata = Annotations.getMetadata(classReference)
 
             if (!metadata.parametersAnnotations[methodName]) {
                 metadata.parametersAnnotations[methodName] = {}
@@ -111,10 +111,10 @@ export class Annotations {
                 value: annotation
             })
 
-            Annotations.setAnnotations(classReference, metadata)
+            Annotations.setMetadata(classReference, metadata)
         }
 
-        static first<T>(annotationType: typeof T, classReference: Object, methodName: string, parameterIndex: number): T | undefined {
+        static first<T>(annotationType: ClassConstructor<T>, classReference: Object, methodName: string, parameterIndex: number): T | undefined {
             if (methodName === 'constructor') {
                 return undefined
             }
@@ -131,7 +131,7 @@ export class Annotations {
         }
     }
 
-    private static getAnnotations(classReference: Object): IvoryAnnotationsModel {
+    private static getMetadata(classReference: Object): IvoryAnnotationsModel {
         return Reflect.getMetadata(IVORY_ANNOTATIONS, classReference) || {
             classAnnotations: [],
             methodsAnnotations: {},
@@ -139,7 +139,7 @@ export class Annotations {
         }
     }
 
-    private static setAnnotations(classReference: Object, annotations: IvoryAnnotationsModel) {
+    private static setMetadata(classReference: Object, annotations: IvoryAnnotationsModel) {
         Reflect.defineMetadata(IVORY_ANNOTATIONS, annotations, classReference)
     }
 }

@@ -16,14 +16,14 @@ import {BasketsWebservices} from "./baskets/baskets-webservices";
 import {UnauthenticatedExceptionHandler} from "./ivory/rest/exception-handlers";
 import {UnauthenticatedException} from "./ivory/exceptions/exceptions";
 import {BasketPolicies} from "./baskets/policies";
-import {registerPolicies} from "./custom/register-policies";
 import {ApplicationEventPublisher} from "./ivory/application-event/application-event-publisher";
 import {ArticleCreated} from "./articles/domain-events";
 import {EventHandlerAnnotation} from "./ivory/application-event/annotations";
+import EventEmitter from "events";
 
-const basketPolicies = new BasketPolicies()
 
-registerPolicies(eventEmitter, basketPolicies)
+const eventEmitter = new EventEmitter()
+
 //
 const eventPublisher = new ApplicationEventPublisher(eventEmitter)
 //

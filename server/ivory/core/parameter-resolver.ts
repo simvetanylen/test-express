@@ -22,7 +22,7 @@ export function createParameterResolver<INPUT>(
         }
     }
 
-    throw Error(`No parameter resolver for ${instance.constructor.name} ${methodName} ${parameterIndex}`)
+    throw Error(`No parameter resolver for ${instance.constructor.name} ${methodName.toString()} ${parameterIndex}`)
 }
 
 export function createMethodParameterResolvers<INPUT>(

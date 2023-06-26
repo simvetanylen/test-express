@@ -1,7 +1,8 @@
 import {ContractValidationException, UnauthenticatedException, UnauthorizedException} from "../exceptions/exceptions";
+import {ClassConstructor} from "class-transformer";
 
 export abstract class RestExceptionHandler<EXCEPTION> {
-    constructor(readonly type: typeof EXCEPTION) {
+    constructor(readonly type: ClassConstructor<EXCEPTION>) {
     }
 
     canHandle(ex: any): boolean {

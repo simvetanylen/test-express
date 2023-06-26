@@ -9,6 +9,9 @@ export class ApplicationEventPublisher {
 
     public publish(event: any) {
         const annotation = Annotations.Class.first(ApplicationEventAnnotation, event.constructor)
+        if (annotation === undefined) {
+            throw Error('Events must be annotated')
+        }
         this.eventEmitter.emit(annotation.eventName, event)
     }
 }

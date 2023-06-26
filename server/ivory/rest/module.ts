@@ -18,8 +18,8 @@ import cookieParser from "cookie-parser";
 import {RequestMappingAnnotation, RestControllerAnnotation} from "./annotations";
 import {Annotations} from "../core/annotation";
 import {createParameterResolutionFunction} from "../core/parameter-resolver";
-import {HttpMethod} from "./http-method";
 import cors from 'cors'
+import {ClassConstructor} from "class-transformer";
 
 export interface RestModuleConfiguration {
     port: number
@@ -77,8 +77,9 @@ export class RestModule implements IvoryModule {
             server.use(express.static(this.configuration.staticFiles))
         }
 
-        const paramFactories = container.getBeans(RestParameterResolverFactory)
-        const exceptionHandlers = container.getBeans(RestExceptionHandler)
+        // TODO : cast not really clean
+        const paramFactories = container.getBeans(RestParameterResolverFactory as ClassConstructor<RestParameterResolverFactory>)
+        const exceptionHandlers = container.getBeans(RestExceptionHandler as ClassConstructor<RestExceptionHandler<any>>)
         const restControllers = container.getBeansByClassAnnotation(RestControllerAnnotation)
 
         for (let restController of restControllers) {
@@ -128,6 +129,7 @@ export class RestModule implements IvoryModule {
         const handler: RequestHandler = async (req, res): Promise<void> => {
             try {
                 const args = await resolutionFunction(req)
+                // @ts-ignore
                 const targetMethod = instance[methodName].bind(instance)
 
                 const result = await (targetMethod(...args))

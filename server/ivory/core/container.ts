@@ -24,7 +24,7 @@ export class IvoryContainer {
         })
     }
 
-    public getBeansByClassAnnotation<ANNOTATION>(annotationType: typeof ANNOTATION): {
+    public getBeansByClassAnnotation<ANNOTATION>(annotationType: ClassConstructor<ANNOTATION>): {
         annotation: ANNOTATION,
         bean: Object
     }[] {
@@ -76,7 +76,7 @@ export class IvoryContainer {
         return instance
     }
 
-    public getBeans<BEAN>(type: typeof BEAN): BEAN[] {
+    public getBeans<BEAN>(type: ClassConstructor<BEAN>): BEAN[] {
         const beans = []
 
         for (let key of this.instances.keys()) {
