@@ -7,6 +7,7 @@ import {Session} from "express-session";
 import {validate} from "class-validator";
 import {ContractValidationException} from "./exceptions";
 import {AbstractSubject} from "./abstract-subject";
+import {SessionAuthenticationManager} from "./session-authentication-manager";
 
 export abstract class RestParameterResolverFactory implements ParameterResolverFactory<Request> {
     public abstract build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined
@@ -136,6 +137,27 @@ export class SubjectSessionResolverFactory<SUBJECT extends AbstractSubject> exte
                 }
 
                 return Promise.resolve(plainToInstance(subjectClass, currentSubject))
+            }
+        }
+    }
+}
+
+export class SessionAuthenticationManagerResolverFactory<SUBJECT extends AbstractSubject> extends RestParameterResolverFactory {
+
+    build(instance: Object, methodName: string | symbol, parameterIndex: number): RestParameterResolver | undefined {
+        if (typeof methodName !== 'string') {
+            return undefined
+        }
+
+        const paramType = Reflect.getMetadata('design:paramtypes', instance, methodName)[parameterIndex]
+
+        if (paramType !== SessionAuthenticationManager) {
+            return undefined
+        }
+
+        return {
+            async resolve(input: Request): Promise<SessionAuthenticationManager<SUBJECT>> {
+                return Promise.resolve(new SessionAuthenticationManager(input.session))
             }
         }
     }

@@ -4,7 +4,7 @@ import {IvoryContainer} from "../core/container";
 import {
     BodyResolverFactory, HeaderResolverFactory,
     PathParamResolverFactory,
-    QueryParamResolverFactory, RestParameterResolverFactory,
+    QueryParamResolverFactory, RestParameterResolverFactory, SessionAuthenticationManagerResolverFactory,
     SessionResolverFactory, SubjectSessionResolverFactory
 } from "./parameter-resolvers";
 import {
@@ -50,6 +50,7 @@ export class RestModule<SUBJECT extends AbstractSubject> implements IvoryModule 
 
             if (this.configuration.subjectClass !== undefined) {
                 container.registerInstance(new SubjectSessionResolverFactory(this.configuration.subjectClass))
+                container.registerInstance(new SessionAuthenticationManagerResolverFactory())
             }
         }
 
